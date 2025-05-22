@@ -233,74 +233,9 @@
     }
   }
 </style>
-  <div class="container">
-    <h2>Kod komplyator</h2>
-  <div class="code-runner">
-    <div class="code-editor">
-      <select id="language" onchange="updateVersion()">
-        <option value="python">Python</option>
-        <option value="cpp">C++</option>
-        <option value="java">Java</option>
-      </select>
-      <select id="version"></select>
-
-      <textarea id="codeInput" rows="10">print("hello")</textarea>
-      <button onclick="compileCode()">Ishga tushirish</button>
-    </div>
-    <div class="output-area">
-      <h3>Kirish</h3>
-      <textarea id="inputData" rows="5"></textarea>
-
-      <h3>Natija</h3>
-      <textarea id="outputArea" rows="5" readonly></textarea>
-    </div>
+  <div class="container" id="kod_koplyator">
+    
   </div>
-  </div>
-
-  <script>
-    const versions = {
-      python: ["3.10.0", "3.9.0"],
-      cpp: ["11", "17"],
-      java: ["15", "17"]
-    };
-
-    function updateVersion() {
-      const lang = document.getElementById("language").value;
-      const versionSelect = document.getElementById("version");
-      versionSelect.innerHTML = "";
-      versions[lang].forEach(v => {
-        const opt = document.createElement("option");
-        opt.value = v;
-        opt.textContent = v;
-        versionSelect.appendChild(opt);
-      });
-    }
-
-    updateVersion();
-
-    async function compileCode() {
-      const lang = document.getElementById("language").value;
-      const version = document.getElementById("version").value;
-      const code = document.getElementById("codeInput").value;
-      const input = document.getElementById("inputData").value;
-
-      const response = await fetch("https://ayyubxon.pythonanywhere.com/api/compile/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          language: lang,
-          version: version,
-          code: code,
-          stdin: input
-        })
-      });
-
-      const data = await response.json();
-      document.getElementById("outputArea").textContent = data.run.output || data.run.stderr || "No output";
-    }
-  </script>
 
      <!-- Test Start -->
   <section class="py-5">
@@ -343,17 +278,89 @@
             fetch(`https://ayyubxon.pythonanywhere.com/api/practices/${practiceId}/`) // Amaliyotni olish
                 .then(response => response.json())
                 .then(data => {
+                  console.log(data);
+                  
                     // HTML qismlarini to'ldirish
-                    document.getElementById('course-title').textContent = data.name;
+
+                    document.getElementById('lab_id').textContent = data.name;
                     document.getElementById('course-description').innerHTML = data.description;
                     document.getElementById('course-video-container').innerHTML = data.link;
                     document.getElementById('download_btn').href = `https://ayyubxon.pythonanywhere.com${data.file}`;
+
+                    if(data.compiler){
+                      document.getElementById('kod_koplyator').innerHTML = `<h2>Kod komplyator</h2>
+                        <div class="code-runner">
+                          <div class="code-editor">
+                            <select id="language" onchange="updateVersion()">
+                              <option value="python">Python</option>
+                              <option value="cpp">C++</option>
+                              <option value="java">Java</option>
+                            </select>
+                            <select id="version"></select>
+
+                            <textarea id="codeInput" rows="10">print("hello")</textarea>
+                            <button onclick="compileCode()">Ishga tushirish</button>
+                          </div>
+                          <div class="output-area">
+                            <h3>Kirish</h3>
+                            <textarea id="inputData" rows="5"></textarea>
+
+                            <h3>Natija</h3>
+                            <textarea id="outputArea" rows="5" readonly></textarea>
+                          </div>
+                        </div>`;
+                    }
                 })
                 .catch(error => console.error("Xatolik:", error));
         } else {
             console.log("Amaliyot ID mavjud emas.");
         }
     });
+</script>
+
+<script>
+                        const versions = {
+                        python: ["3.10.0", "3.9.0"],
+                        cpp: ["11", "17"],
+                        java: ["15", "17"]
+                      };
+
+                      function updateVersion() {
+                        const lang = document.getElementById("language").value;
+                        const versionSelect = document.getElementById("version");
+                        versionSelect.innerHTML = "";
+                        versions[lang].forEach(v => {
+                          const opt = document.createElement("option");
+                          opt.value = v;
+                          opt.textContent = v;
+                          versionSelect.appendChild(opt);
+                        });
+                      }
+
+                      updateVersion();
+
+                      async function compileCode() {
+                        const lang = document.getElementById("language").value;
+                        const version = document.getElementById("version").value;
+                        const code = document.getElementById("codeInput").value;
+                        const input = document.getElementById("inputData").value;
+
+                        const response = await fetch("https://ayyubxon.pythonanywhere.com/api/compile/", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json"
+                          },
+                          body: JSON.stringify({
+                            language: lang,
+                            version: version,
+                            code: code,
+                            stdin: input
+                          })
+                        });
+
+                        const data = await response.json();
+                        document.getElementById("outputArea").textContent = data.run.output || data.run.stderr || "No output";
+                      }
 </script>
 
   <!-- Footer Start -->
